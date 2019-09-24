@@ -1,0 +1,71 @@
+Assignment2
+================
+Grace Becker
+9/24/2019
+
+``` r
+library('tidyverse')
+library('gapminder')
+library('ggrepel')
+library('patchwork')
+library('scales')
+```
+
+``` r
+df.1952 = gapminder %>% filter(year == 1952)
+df.2002 = gapminder %>% filter(year == 2002)
+df.1952.kuwait = df.1952 %>% filter(country == 'Kuwait') 
+df.2002.kuwait = df.2002 %>% filter(country == 'Kuwait')
+
+colors <- c("red2", "steelblue", "forestgreen", "blueviolet", "darkorange")
+```
+
+``` r
+p = ggplot(df.1952, aes(x=gdpPercap, y=lifeExp, color=continent, size = pop)) +
+        geom_point(alpha = 0.5) +
+        scale_x_log10(labels = scientific,
+                      breaks = c(1e+3, 1e+4, 1e+5),
+                      limits = c(2.2e+2, 1.2e+5)) +
+        scale_size(breaks = seq(1e+5, 1.5e+9, 3e+8), 
+                   limits = c(1e+4, 1.5e+9),
+                   range = c(1, 10), labels = scales::comma) +
+        ylim(c(27, 82)) +
+        theme(legend.position = 0) +
+        xlab("GDP per capita") +
+        ylab("Life Expectancy, years") +
+        geom_text_repel(data = df.1952.kuwait, 
+                    aes(x = gdpPercap, y = lifeExp, label = country), 
+                    segment.color = 'grey50',
+                    color = 'grey50',
+                    segment.size = 0.5,
+                    size = 4,
+                    nudge_y = -8) +
+        scale_color_manual(values = colors) +
+        annotate("text", x = 3e+04, y = 30, label = "1952", size = 10, color = 'grey80')
+
+a = ggplot(df.2002, aes(x=gdpPercap, y=lifeExp, color=continent, size=pop)) +
+        geom_point(alpha = 0.5) +
+        scale_x_log10(labels = scientific,
+                      breaks = c(1e+3, 1e+4, 1e+5),
+                      limits = c(2.2e+2, 1.2e+5)) +
+        scale_size(breaks = seq(1e+5, 1.5e+9, 3e+8), 
+                   limits = c(1e+4, 1.5e+9),
+                   range = c(1, 10), labels = scales::comma) +
+        ylim(c(27, 82)) +
+        xlab("GDP per capita") +
+        ylab("Life Expectancy, years") +
+        labs(size = "Population size", color = "Continent") +
+        geom_text_repel(data = df.2002.kuwait, 
+                    aes(x = gdpPercap, y = lifeExp, label = country), 
+                    segment.color = 'grey50',
+                    color = 'grey50',
+                    segment.size = 0.5,
+                    size = 4,
+                    nudge_y = -8) +
+        scale_color_manual(values =colors) +
+        annotate("text", x = 3e+04, y = 30, label = "2002", size = 10, color = 'grey80')
+
+p+a
+```
+
+![](Assignment2_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
